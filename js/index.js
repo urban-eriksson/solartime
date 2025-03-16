@@ -41,11 +41,11 @@ class SolarTimeApp {
   }
 
   formatTime(date) {
-    return date.toLocaleTimeString();
+    return date.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
   }
 
   formatUtcTime(date) {
-    return date.toUTCString().split(' ')[4];
+    return date.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC' });
   }
   
   formatTimeDelta(hours) {
@@ -103,18 +103,21 @@ class SolarTimeApp {
           - 0.032077 * Math.sin(gamma)
           - 0.014615 * Math.cos(2 * gamma)
           - 0.040849 * Math.sin(2 * gamma));
+
+        console.log(eqTime, longitudeOffset);
+
           
         // Calculate solar time
-        const utcTime = now.getTime();
-        const solarTime = new Date(utcTime - longitudeOffset * 60000 * 60 + eqTime * 60000);
+        const utcTimestamp = now.getTime() + now.getTimezoneOffset()*60*1000;
+        const solarTime = new Date(utcTimestamp - longitudeOffset * 60000 * 60 + eqTime * 60000);
         this.solarTimeDisplay.textContent = this.formatTime(solarTime);
         
         // Calculate and display longitudinal time as a time delta (offset from UTC)
-        const formattedLongitudeOffset = this.formatTimeDelta(longitudeOffset);
+        const formattedLongitudeOffset = this.formatTimeDelta(-longitudeOffset);
         this.longitudinalTimeDisplay.textContent = formattedLongitudeOffset;
         
         // Also calculate the actual time based on longitude for solar calculations
-        const longitudinalTime = new Date(utcTime - longitudeOffset * 60000 * 60);
+        const longitudinalTime = new Date(utcTimestamp - longitudeOffset * 60000 * 60);
 
       }, (error) => {
         console.error('Error getting geolocation:', error);
