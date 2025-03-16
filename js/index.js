@@ -47,6 +47,25 @@ class SolarTimeApp {
   formatUtcTime(date) {
     return date.toUTCString().split(' ')[4];
   }
+  
+  formatTimeDelta(hours) {
+    // Convert hours to hours, minutes, seconds
+    const sign = hours < 0 ? '-' : '+';
+    const absHours = Math.abs(hours);
+    
+    const wholeHours = Math.floor(absHours);
+    const minutesFraction = (absHours - wholeHours) * 60;
+    const wholeMinutes = Math.floor(minutesFraction);
+    const secondsFraction = (minutesFraction - wholeMinutes) * 60;
+    const wholeSeconds = Math.floor(secondsFraction);
+    
+    // Format with leading zeros
+    const formattedHours = String(wholeHours).padStart(2, '0');
+    const formattedMinutes = String(wholeMinutes).padStart(2, '0');
+    const formattedSeconds = String(wholeSeconds).padStart(2, '0');
+    
+    return `${sign}${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  }
 
   isLeapYear(date) {
     const year = date.getUTCFullYear();
@@ -63,6 +82,7 @@ class SolarTimeApp {
         const now = new Date();
         
         // Calculate longitudinal time offset (renamed from spaze)
+        // Longitude divided by 15 gives the time zone offset in hours
         const longitudeOffset = -position.coords.longitude / 15;
         
         // Calculate day of year
@@ -89,9 +109,13 @@ class SolarTimeApp {
         const solarTime = new Date(utcTime - longitudeOffset * 60000 * 60 + eqTime * 60000);
         this.solarTimeDisplay.textContent = this.formatTime(solarTime);
         
-        // Calculate and display longitudinal time (previously spaze)
+        // Calculate and display longitudinal time as a time delta (offset from UTC)
+        const formattedLongitudeOffset = this.formatTimeDelta(longitudeOffset);
+        this.longitudinalTimeDisplay.textContent = formattedLongitudeOffset;
+        
+        // Also calculate the actual time based on longitude for solar calculations
         const longitudinalTime = new Date(utcTime - longitudeOffset * 60000 * 60);
-        this.longitudinalTimeDisplay.textContent = this.formatTime(longitudinalTime);
+
       }, (error) => {
         console.error('Error getting geolocation:', error);
         this.solarTimeDisplay.textContent = 'Geolocation error';
