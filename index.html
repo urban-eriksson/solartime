@@ -4,49 +4,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solartime</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <div id="app">
-    <h1>Solartime</h1>
+    <header>
+      <h1><i class="fa fa-sun-o" aria-hidden="true"></i> Solartime</h1>
+    </header>
     <div class="group-container">
-      <h2 class="group-header">Solar Time Information</h2>
-      <div class="time-container">
-        <div class="time-item time-item-large">
-          <h2>Solar Time</h2>
-          <div id="solar-time" class="time-display large-time">--:--:--</div>
+      <h2 class="group-header"><i class="fa fa-clock-o" aria-hidden="true"></i> Solar Time</h2>
+      <div class="main-display">
+        <div id="solar-time" class="time-display large-time">--:--:--</div>
+        <div class="formula">
+          <span>= UTC</span>
+          <span><i class="fa fa-plus" aria-hidden="true"></i> Longitude</span>
+          <span><i class="fa fa-plus" aria-hidden="true"></i> EOT</span>
         </div>
+      </div>
+      <div class="time-container">
         <div class="time-item">
-          <h2>UTC Time</h2>
+          <h3><i class="fa fa-globe" aria-hidden="true"></i> UTC Time</h3>
           <div id="utc-time" class="time-display">--:--:--</div>
         </div>
         <div class="time-item">
-          <h2>Longitudinal Time Offset</h2>
+          <h3><i class="fa fa-map-marker" aria-hidden="true"></i> Longitude Offset</h3>
           <div id="longitudinal-time" class="time-display">--:--:--</div>
         </div>
         <div class="time-item">
-          <h2>EOT Offset</h2>
+          <h3><i class="fa fa-adjust" aria-hidden="true"></i> EOT Offset</h3>
           <div id="equation-time" class="time-display">--:--:--</div>
         </div>
       </div>
     </div>
     <div class="group-container">
-      <h2 class="group-header">Day Information</h2>
-      <div class="time-container">
-        <div class="time-item time-item-large">
-          <h2>Day Length</h2>
-          <div id="day-length" class="time-display large-time">--:--:--</div>
+      <h2 class="group-header"><i class="fa fa-calendar" aria-hidden="true"></i> Day Information</h2>
+      <div class="main-display">
+        <div id="day-length" class="time-display large-time">--:--:--</div>
+        <div class="formula">
+          <span>= Time between</span>
+          <span><i class="fa fa-sun-o" aria-hidden="true"></i> Sunrise</span>
+          <span>and</span>
+          <span><i class="fa fa-moon-o" aria-hidden="true"></i> Sunset</span>
         </div>
+      </div>
+      <div class="time-container">
         <div class="time-item">
-          <h2>Sunrise</h2>
+          <h3><i class="fa fa-arrow-up" aria-hidden="true"></i><i class="fa fa-sun-o" aria-hidden="true"></i> Sunrise</h3>
           <div id="sunrise-time" class="time-display">--:--:--</div>
         </div>
         <div class="time-item">
-          <h2>Sunset</h2>
+          <h3><i class="fa fa-arrow-down" aria-hidden="true"></i><i class="fa fa-moon-o" aria-hidden="true"></i> Sunset</h3>
           <div id="sunset-time" class="time-display">--:--:--</div>
         </div>
         <div class="time-item">
-          <h2>Day Length Change</h2>
+          <h3><i class="fa fa-exchange" aria-hidden="true"></i> Day Change</h3>
           <div id="day-length-change" class="time-display">--:--:--</div>
         </div>
       </div>
