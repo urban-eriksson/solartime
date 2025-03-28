@@ -106,41 +106,38 @@ class SolarTimeApp {
     }
   }
 
+
+  calculateSolarParametersAtTime(date) {
+    const dayFraction = this.calculateDayFraction(date);
+    return this.calculateSolarParameters(date, dayFraction);
+  }
+
+
   // Calculate solar parameters based on day of year
-  calculateSolarParameters(date, dayFraction, useNoon = false) {
-    // Create a noon date if requested (for more accurate day length calculations)
-    let calculationDate = date;
-    let calculationDayFraction = dayFraction;
-    
-    if (useNoon) {
-      // Create a date object for noon on the specified day
-      calculationDate = new Date(date);
-      calculationDate.setHours(12, 0, 0, 0);
-      
-      // Recalculate day fraction for noon
-      calculationDayFraction = this.calculateDayFraction(calculationDate);
-    }
+  calculateSolarParameters(date) {
+
+    const dayFraction = this.calculateDayFraction(date);
     
     // Calculate the value of gamma (year angle)
     let gamma = 0;
-    if (this.isLeapYear(calculationDate)) {
-      gamma = 2 * Math.PI / 366 * (calculationDayFraction - 0.5);
+    if (this.isLeapYear(date)) {
+      gamma = 2 * Math.PI / 366 * (dayFraction - 0.5);
     } else {
-      gamma = 2 * Math.PI / 365 * (calculationDayFraction - 0.5);
+      gamma = 2 * Math.PI / 365 * (dayFraction - 0.5);
     }
     
-    // Calculate the equation of time (in minutes)
+    // Calculate the equation of time (in hours)
     const eqTime = 229.18 * (0.000075 + 0.001868 * Math.cos(gamma)
       - 0.032077 * Math.sin(gamma)
       - 0.014615 * Math.cos(2 * gamma)
-      - 0.040849 * Math.sin(2 * gamma));
+      - 0.040849 * Math.sin(2 * gamma)) / 60;
       
     // Calculate declination of the sun (in radians)
-    const decl = 0.006918 - 0.399912 * Math.cos(gamma) + 0.070257 * Math.sin(gamma)
+    const declination = 0.006918 - 0.399912 * Math.cos(gamma) + 0.070257 * Math.sin(gamma)
       - 0.006758 * Math.cos(2 * gamma) + 0.000907 * Math.sin(2 * gamma)
       - 0.002697 * Math.cos(3 * gamma) + 0.00148 * Math.sin(3 * gamma);
       
-    return { gamma, eqTime, decl };
+    return { gamma, eqTime, declination };
   }
   
   // Calculate day of year fraction
@@ -165,54 +162,49 @@ class SolarTimeApp {
   getTimeAndLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
-        const now = new Date();
-        const today = now.getDate();
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
-        
-        // Check if the day has changed or if it's our first run
-        const dayChanged = (this.currentDay !== null && this.currentDay !== today);
-        if (this.currentDay === null || dayChanged) {
-          this.currentDay = today;
-          
-          // If day changed, yesterday's data needs to be recalculated
-          if (dayChanged) {
-            this.yesterdayDayLength = null;
-          }
-        }
-        
-        // Calculate longitudinal time offset
-        // Longitude divided by 15 gives the time zone offset in hours
-        const longitudeOffset = -longitude / 15;
+
+        const now = new Date();
         
         // Calculate day of year
         const dayFraction = this.calculateDayFraction(now);
-        
-        // Calculate solar parameters for current time (for solar time & EOT display)
-        const { eqTime, decl: currentDecl } = this.calculateSolarParameters(now, dayFraction);
-        
-        // Get noon parameters for day length calculations (more accurate)
-        const { decl: noonDecl } = this.calculateSolarParameters(now, dayFraction, true);
+
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayFraction = this.calculateDayFraction(yesterday);
+
+        console.log(dayFraction, yesterdayFraction);
+
+        const {solarTime, longitudeOffset, eqTime} = this.calculateSolarTime(longitude, now);
           
-        // Display equation of time formatted as hh:mm:ss with sign
-        const eqTimeHours = eqTime / 60; // Convert minutes to hours
-        this.equationTimeDisplay.textContent = this.formatTimeDelta(eqTimeHours);
-          
-        // Calculate solar time
-        const msPerHour = 60 * 60 * 1000;
-        const utcTimestamp = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
-        const solarTime = new Date(utcTimestamp - longitudeOffset * msPerHour + eqTime * 60 * 1000);
         this.solarTimeDisplay.textContent = this.formatTime(solarTime);
-        
-        // Calculate and display longitudinal time as a time delta (offset from UTC)
-        const formattedLongitudeOffset = this.formatTimeDelta(-longitudeOffset);
-        this.longitudinalTimeDisplay.textContent = formattedLongitudeOffset;
+        this.longitudinalTimeDisplay.textContent = this.formatTimeDelta(longitudeOffset);
+        this.equationTimeDisplay.textContent = this.formatTimeDelta(eqTime);    
         
         // Calculate sunrise and sunset using noon declination
-        this.calculateSunriseSunset(latitude, longitude, noonDecl, eqTime, now);
-        
-        // Calculate yesterday's data for day length comparison
-        this.calculateYesterdayDayLength(latitude, longitude, now);
+        const dayInfo = this.calculateDayInfo(latitude, longitude,  eqTime, now);
+        const yesterdayInfo = this.calculateDayInfo(latitude, longitude, eqTime, yesterday);
+
+        // Polar night - sun never rises
+        if (dayInfo.polarNight) {
+          this.sunriseDisplay.textContent = "Sun never rises today";
+          this.sunsetDisplay.textContent = "Sun never rises today";
+          this.dayLengthDisplay.textContent = "00:00:00";
+          this.dayLengthChangeDisplay.textContent = "N/A";  
+        } else if (dayInfo.polarDay) {
+          // Polar day - sun never sets
+          this.sunriseDisplay.textContent = "Sun never sets today";
+          this.sunsetDisplay.textContent = "Sun never sets today";
+          this.dayLengthDisplay.textContent = "24:00:00";
+          this.dayLengthChangeDisplay.textContent = "N/A";
+        } else {
+          this.sunriseDisplay.textContent = this.formatTime(dayInfo.sunrise);
+          this.sunsetDisplay.textContent = this.formatTime(dayInfo.sunset);
+          this.dayLengthDisplay.textContent = this.formatDuration(dayInfo.dayLength);
+          const dayLengthChange = (dayInfo.dayLength - yesterdayInfo.dayLength) * 60; // in minutes
+          this.dayLengthChangeDisplay.textContent = this.formatDayLengthChange(dayLengthChange);
+        }
         
       }, (error) => {
         console.error('Error getting geolocation:', error);
@@ -223,13 +215,43 @@ class SolarTimeApp {
       this.setErrorOnDisplays('Geolocation not supported');
     }
   }
-  
+
+  calculateSolarTime(longitude, now) {
+
+    // Calculate longitudinal time offset
+    // Longitude divided by 15 gives the time zone offset in hours
+    const longitudeOffset = longitude / 15;
+
+    const dayFraction = this.calculateDayFraction(now);
+    const { eqTime, decl} = this.calculateSolarParameters(now, dayFraction);
+
+    // Calculate solar time
+    const msPerHour = 60 * 60 * 1000;
+    const utcTimestamp = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
+    const solarTime = new Date(utcTimestamp + (longitudeOffset + eqTime) * msPerHour);
+    this.solarTimeDisplay.textContent = this.formatTime(solarTime);
+
+    return { solarTime, longitudeOffset, eqTime};
+  }
+
   // Calculate sunrise and sunset times
-  calculateSunriseSunset(latitude, longitude, declination, eqTime, date) {
+  calculateDayInfo(latitude, longitude, eqTime, date) {
+    // Convert to milliseconds for Date calculations
+    const msPerHour = 60 * 60 * 1000;
+    const minutesPerHour = 60;
+
+    const longitudeOffset = longitude / 15;
     const latRad = latitude * Math.PI / 180; // Convert latitude to radians
     
     // Sunrise/sunset occurs when zenith angle is 90.833 degrees (accounting for refraction and solar disc diameter)
     const zenith = 90.833 * Math.PI / 180;
+
+    const solarNoon = new Date(date);
+    solarNoon.setHours(12, 0, 0, 0);
+
+    const localNoon = new Date(solarNoon.getTime() - (solarNoon.getTimezoneOffset() / minutesPerHour  + longitudeOffset + eqTime) * msPerHour);    
+
+    const {declination} = this.calculateSolarParameters(solarNoon);  
     
     // Sunrise/sunset hour angle
     const cosHourAngle = (Math.cos(zenith) - Math.sin(latRad) * Math.sin(declination)) / 
@@ -237,21 +259,11 @@ class SolarTimeApp {
     
     // Handle edge cases: polar day/night
     if (cosHourAngle > 1) {
-      // Polar night - sun never rises
-      this.sunriseDisplay.textContent = "Sun never rises today";
-      this.sunsetDisplay.textContent = "Sun never rises today";
-      this.dayLengthDisplay.textContent = "00:00:00";
-      this.dayLengthChangeDisplay.textContent = "N/A";
-      return;
+      return { sunrise: null, sunset: null, dayLength: null, polarDay: false, polarNight: true};
     }
     
     if (cosHourAngle < -1) {
-      // Polar day - sun never sets
-      this.sunriseDisplay.textContent = "Sun never sets today";
-      this.sunsetDisplay.textContent = "Sun never sets today";
-      this.dayLengthDisplay.textContent = "24:00:00";
-      this.dayLengthChangeDisplay.textContent = "N/A";
-      return;
+      return { sunrise: null, sunset: null, dayLength: null, polarDay: true, polarNight: false};
     }
     
     // Calculate the hour angle in radians
@@ -259,76 +271,38 @@ class SolarTimeApp {
     
     // Convert hour angle to hours
     const hourAngleHours = hourAngle * 180 / Math.PI / 15;
-    
+
+    const approxSunrise = new Date(localNoon.getTime() - hourAngleHours * msPerHour);
+    const approxSunset = new Date(localNoon.getTime() + hourAngleHours * msPerHour);
+
+    // Second pass: refine declination and EoT at approximate sunrise and sunset times
+    const {declination: sunriseDeclination} = this.calculateSolarParametersAtTime(approxSunrise);
+    const {declination: sunsetDeclination} = this.calculateSolarParametersAtTime(approxSunset);
+
+    // Refined sunrise calculation
+    const hourAngleSunrise = Math.acos(
+      (Math.cos(zenith) - Math.sin(latRad) * Math.sin(sunriseDeclination)) /
+      (Math.cos(latRad) * Math.cos(sunriseDeclination))
+    );
+    const hourAngleHoursSunrise = hourAngleSunrise * 180 / Math.PI / 15;
+
+    // Refined sunset calculation
+    const hourAngleSunset = Math.acos(
+      (Math.cos(zenith) - Math.sin(latRad) * Math.sin(sunsetDeclination)) /
+      (Math.cos(latRad) * Math.cos(sunsetDeclination))
+    );
+    const hourAngleHoursSunset = hourAngleSunset * 180 / Math.PI / 15;
+
+    const refinedSunrise = new Date(localNoon.getTime() - hourAngleHoursSunrise * msPerHour);
+    const refinedSunset = new Date(localNoon.getTime() + hourAngleHoursSunset * msPerHour);
+
     // Calculate day length in hours
-    const dayLength = 2 * hourAngleHours;
-    this.todayDayLength = dayLength;
-    
-    // Convert to milliseconds for Date calculations
-    const msPerHour = 60 * 60 * 1000;
-    
-    // Calculate sunrise and sunset times
-    const solarSunriseHour = 12 - hourAngleHours;
-    const solarSunsetHour = 12 + hourAngleHours;
-    
-    // Convert to UTC timestamps, adjusting for longitude and equation of time
-    const longitudeAdjustMs = longitude / 15 * msPerHour;
-    const eqTimeMs = eqTime * 60 * 1000;
-    
-    // Create Date objects for sunrise and sunset
-    const sunriseLocal = new Date(solarSunriseHour * msPerHour - longitudeAdjustMs - eqTimeMs);
-    const sunsetLocal = new Date(solarSunsetHour * msPerHour - longitudeAdjustMs - eqTimeMs);
-    
-    // Display sunrise and sunset in local time
-    this.sunriseDisplay.textContent = this.formatTime(sunriseLocal);
-    this.sunsetDisplay.textContent = this.formatTime(sunsetLocal);
-    
-    // Display day length
-    this.dayLengthDisplay.textContent = this.formatDuration(dayLength);
-    
-    // Compare with yesterday's day length and show the change
-    if (this.yesterdayDayLength !== null) {
-      const dayLengthChange = (this.todayDayLength - this.yesterdayDayLength) * 60; // in minutes
-      this.dayLengthChangeDisplay.textContent = this.formatDayLengthChange(dayLengthChange);
-    } else {
-      this.dayLengthChangeDisplay.textContent = "Calculating...";
-    }
+    const dayLength = hourAngleHoursSunrise + hourAngleHoursSunset;
+
+    return { sunrise: refinedSunrise, sunset: refinedSunset, dayLength: dayLength, polarDay: false, polarNight: false};
+
   }
-  
-  // Calculate yesterday's day length for comparison
-  calculateYesterdayDayLength(latitude, longitude, today) {
-    // If we've already calculated yesterday's day length, don't do it again
-    if (this.yesterdayDayLength !== null) {
-      return;
-    }
-    
-    // Create yesterday's date
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    // Use noon time for more accurate day length calculation
-    // Calculate solar parameters for yesterday at noon
-    const { decl } = this.calculateSolarParameters(yesterday, null, true);
-    
-    // Calculate hour angle cosine for sunrise/sunset
-    const latRad = latitude * Math.PI / 180;
-    const zenith = 90.833 * Math.PI / 180;
-    const cosHourAngle = (Math.cos(zenith) - Math.sin(latRad) * Math.sin(decl)) / 
-                         (Math.cos(latRad) * Math.cos(decl));
-    
-    // Check if sun never rises/sets at this location yesterday
-    if (cosHourAngle > 1 || cosHourAngle < -1) {
-      this.yesterdayDayLength = cosHourAngle > 1 ? 0 : 24;
-      return;
-    }
-    
-    // Calculate the hour angle for yesterday
-    const hourAngle = Math.acos(cosHourAngle);
-    const hourAngleHours = hourAngle * 180 / Math.PI / 15;
-    
-    // Store yesterday's day length
-    this.yesterdayDayLength = 2 * hourAngleHours;
-  }
+
 }
 
 // Initialize the app
