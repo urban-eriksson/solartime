@@ -15,7 +15,7 @@ body {
 #app {
   max-width: 600px;
   margin: 0 auto;
-  background: white;
+  background: #0094FF;
   padding: 16px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -24,25 +24,34 @@ body {
 header {
   margin-bottom: 16px;
   text-align: center;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   padding-bottom: 10px;
 }
 
 h1 {
-  color: #0066cc;
+  color: white;
   font-size: 1.6rem;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
 }
 
 h2 {
-  color: #0066cc;
+  color: white;
   font-size: 1.2rem;
   font-weight: 500;
   margin-bottom: 8px;
 }
 
 h3 {
-  color: #555;
+  color: white;
   font-size: 0.9rem;
   font-weight: 500;
   margin-bottom: 4px;
@@ -54,10 +63,10 @@ h3 {
 
 .group-header {
   margin-bottom: 10px;
-  color: #0066cc;
+  color: white;
   font-size: 1.1rem;
   padding-bottom: 6px;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
 }
@@ -67,8 +76,7 @@ h3 {
 }
 
 .main-display {
-  background-color: #f0f7ff;
-  border-left: 4px solid #0066cc;
+  background-color: #0070C0;
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 12px;
@@ -81,7 +89,7 @@ h3 {
   flex-wrap: wrap;
   gap: 6px;
   font-size: 0.85rem;
-  color: #666;
+  color: white;
   margin-top: 4px;
 }
 
@@ -93,9 +101,9 @@ h3 {
 
 .time-item {
   padding: 10px;
-  background-color: #f8f8f8;
+  background-color: #0082DA; /* Blue tone between #0070C0 and #0094FF */
   border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -107,15 +115,16 @@ h3 {
 .time-display {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #333;
+  color: white;
   padding: 4px 0;
   text-align: center;
 }
 
 .large-time {
   font-size: 1.8rem;
-  color: #0066cc;
+  color: white;
   font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive layout */
