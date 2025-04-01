@@ -4,17 +4,27 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #0094FF;
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.4;
-  color: #333;
-  background-color: #f0f2f5;
+  color: white;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 #app {
   max-width: 600px;
+  width: 100%;
   margin: 0 auto;
+  flex: 1 0 auto;
   background: #0094FF;
   padding: 16px;
   border-radius: 8px;
@@ -137,6 +147,7 @@ h3 {
     border-radius: 0;
     box-shadow: none;
     padding: 12px;
+    min-height: 100vh;
   }
   
   .time-container {
