@@ -96,63 +96,110 @@ class SolarTimeApp {
     return this.formatTimeDelta(hours);
   }
 
-  isLeapYear(date) {
-    const year = date.getUTCFullYear();
-    if ((year & 3) !== 0) {
-      return false;
-    } else {
-      return ((year % 100) !== 0 || (year % 400) === 0);
-    }
-  }
+  // isLeapYear(date) {
+  //   const year = date.getUTCFullYear();
+  //   if ((year & 3) !== 0) {
+  //     return false;
+  //   } else {
+  //     return ((year % 100) !== 0 || (year % 400) === 0);
+  //   }
+  // }
 
-
-  /**
-   * Calculate solar parameters at a specific time
-   * @param {Date} date - Date object for calculation
-   * @returns {Object} Object containing solar parameters
-   */
-  calculateSolarParametersAtTime(date) {
-    return this.calculateSolarParameters(date);
-  }
-
-  /**
-   * Calculate solar parameters based on day of year
-   * @param {Date} date - Date object for calculation
-   * @returns {Object} Object containing gamma, equation of time, and declination
-   */
-  calculateSolarParameters(date) {
-    const dayFraction = this.calculateDayFraction(date);
+  // /**
+  //  * Calculate solar parameters based on day of year
+  //  * @param {Date} date - Date object for calculation
+  //  * @returns {Object} Object containing gamma, equation of time, and declination
+  //  */
+  // calculateSolarParameters(date) {
+  //   const dayFraction = this.calculateDayFraction(date);
     
-    // Calculate the value of gamma (year angle)
-    let gamma = 0;
-    if (this.isLeapYear(date)) {
-      gamma = 2 * Math.PI / 366 * (dayFraction - 0.5);
-    } else {
-      gamma = 2 * Math.PI / 365 * (dayFraction - 0.5);
-    }
+  //   // Calculate the value of gamma (year angle)
+  //   let gamma = 0;
+  //   if (this.isLeapYear(date)) {
+  //     gamma = 2 * Math.PI / 366 * (dayFraction - 0.5);
+  //   } else {
+  //     gamma = 2 * Math.PI / 365 * (dayFraction - 0.5);
+  //   }
     
-    // Calculate the equation of time (in hours)
-    const eqTime = 229.18 * (0.000075 + 0.001868 * Math.cos(gamma)
-      - 0.032077 * Math.sin(gamma)
-      - 0.014615 * Math.cos(2 * gamma)
-      - 0.040849 * Math.sin(2 * gamma)) / 60;
+  //   // Calculate the equation of time (in hours)
+  //   const eqTime = 229.18 * (0.000075 + 0.001868 * Math.cos(gamma)
+  //     - 0.032077 * Math.sin(gamma)
+  //     - 0.014615 * Math.cos(2 * gamma)
+  //     - 0.040849 * Math.sin(2 * gamma)) / 60;
       
-    // Calculate declination of the sun (in radians)
-    const declination = 0.006918 - 0.399912 * Math.cos(gamma) + 0.070257 * Math.sin(gamma)
-      - 0.006758 * Math.cos(2 * gamma) + 0.000907 * Math.sin(2 * gamma)
-      - 0.002697 * Math.cos(3 * gamma) + 0.00148 * Math.sin(3 * gamma);
+  //   // Calculate declination of the sun (in radians)
+  //   const declination = 0.006918 - 0.399912 * Math.cos(gamma) + 0.070257 * Math.sin(gamma)
+  //     - 0.006758 * Math.cos(2 * gamma) + 0.000907 * Math.sin(2 * gamma)
+  //     - 0.002697 * Math.cos(3 * gamma) + 0.00148 * Math.sin(3 * gamma);
       
-    return { gamma, eqTime, declination };
-  }
+  //   return { gamma, eqTime, declination };
+  // }
   
-  // Calculate day of year fraction
-  calculateDayFraction(date) {
-    const start = new Date(date.getFullYear(), 0, 0);
-    const delta = date.getTime() - start.getTime();
-    const oneDay = 1000 * 60 * 60 * 24;
-    return delta / oneDay;
-  }
+  // // Calculate day of year fraction
+  // calculateDayFraction(date) {
+  //   const start = new Date(date.getFullYear(), 0, 0);
+  //   const delta = date.getTime() - start.getTime();
+  //   const oneDay = 1000 * 60 * 60 * 24;
+  //   return delta / oneDay;
+  // }
   
+
+
+  // /**
+  //  * Calculate gamma using the fixed astronomical J2000 reference epoch
+  //  * @param {Date} date - current UTC date and time
+  //  * @returns {number} gamma - year angle in radians
+  //  */
+  // calculateGammaAccurately(date) {
+  //   // Fixed Reference Epoch: Vernal Equinox J2000 (March 20, 2000, 07:35 UTC)
+  //   const referenceEquinox = new Date(Date.UTC(2000, 2, 20, 7, 35, 0));
+  //   const msPerDay = 86400000;
+  //   const tropicalYear = 365.2422;
+
+  //   const daysSinceEquinox = (date - referenceEquinox) / msPerDay;
+  //   const gammaEquinox = 2 * Math.PI * ((daysSinceEquinox % tropicalYear) / tropicalYear);
+
+  //   // Shift gamma from equinox back to Jan 1 (~79.75 days earlier)
+  //   const daysFromJan1ToEquinox = 79.75;
+  //   const gammaOffset = (2 * Math.PI * daysFromJan1ToEquinox) / tropicalYear;
+
+  //   const gammaCorrected = gammaEquinox + gammaOffset;
+
+  //   return gammaCorrected;
+  // }
+
+  // /**
+  //  * Calculate solar parameters (EoT, declination) based on gamma
+  //  * @param {Date} date - current UTC date and time
+  //  * @returns {Object} Object containing gamma, eqTime (hours), and declination (radians)
+  //  */
+  // calculateSolarParameters(date) {
+  //   const gamma = this.calculateGammaAccurately(date);
+
+  //   // Equation of Time in minutes
+  //   const eqTimeMinutes = 229.18 * (
+  //     0.000075 +
+  //     0.001868 * Math.cos(gamma) -
+  //     0.032077 * Math.sin(gamma) -
+  //     0.014615 * Math.cos(2 * gamma) -
+  //     0.040849 * Math.sin(2 * gamma)
+  //   );
+
+  //   const eqTime = eqTimeMinutes / 60; // convert to hours
+
+  //   // Solar declination (radians)
+  //   const declination = 0.006918 -
+  //     0.399912 * Math.cos(gamma) +
+  //     0.070257 * Math.sin(gamma) -
+  //     0.006758 * Math.cos(2 * gamma) +
+  //     0.000907 * Math.sin(2 * gamma) -
+  //     0.002697 * Math.cos(3 * gamma) +
+  //     0.00148 * Math.sin(3 * gamma);
+
+  //   return { gamma, eqTime, declination };
+  // }
+
+
   // Set error message on all displays
   setErrorOnDisplays(message) {
     this.solarTimeDisplay.textContent = message;
@@ -163,7 +210,147 @@ class SolarTimeApp {
     this.dayLengthDisplay.textContent = message;
     this.dayLengthChangeDisplay.textContent = message;
   }
-  
+
+
+  /**
+   * Converts degrees to radians.
+   * @param {number} degrees Angle in degrees.
+   * @returns {number} Angle in radians.
+   */
+  degreesToRadians(degrees) {
+    return degrees * (Math.PI / 180);
+  }
+
+  /**
+   * Calculates the fraction of the tropical year elapsed since the reference epoch (V2K Equinox).
+   *
+   * @param {number} targetTimestamp The target timestamp in milliseconds UTC.
+   * @returns {number} The fraction of the current tropical year elapsed (0 to < 1).
+   */
+  getFractionOfYear(targetTimestamp) {
+    if (typeof targetTimestamp !== 'number') {
+        console.error("Invalid targetTimestamp. Must be milliseconds UTC.");
+        return NaN;
+    }
+
+  /**
+   * Constants
+   */
+  // Mean Tropical Year length in days (more precise)
+  const TROPICAL_YEAR_DAYS = 365.24219;
+  // Tropical Year length in milliseconds
+  const TROPICAL_YEAR_MS = TROPICAL_YEAR_DAYS * 24 * 60 * 60 * 1000;
+
+  // Reference Epoch: Vernal Equinox March 20, 2000, 07:35 UTC
+  // Use Date.UTC to avoid timezone issues
+  const VERNAL_EQUINOX_2000_MS = Date.UTC(2000, 2, 20, 7, 35, 0); // Month is 0-indexed (2 = March)
+
+    const elapsedMs = targetTimestamp - VERNAL_EQUINOX_2000_MS;
+    const elapsedTropicalYears = elapsedMs / TROPICAL_YEAR_MS;
+
+    // The fraction of the *current* year is the fractional part of the total elapsed years
+    // Use modulo 1 essentially: elapsedTropicalYears - Math.floor(elapsedTropicalYears)
+    // Or handle negative elapsed times correctly:
+    let fraction = elapsedTropicalYears % 1;
+    if (fraction < 0) {
+        fraction += 1; // Ensure fraction is always positive [0, 1)
+    }
+    return fraction;
+  }
+
+  /**
+   * Calculates the approximate solar declination using a timestamp.
+   * The angle is based on the fraction of the tropical year elapsed since the V2K vernal equinox.
+   * δ ≈ ε * sin( 2π * fractionOfYear )
+   *
+   * @param {number|Date} timeInput Timestamp in milliseconds UTC or a Date object.
+   * @returns {number} Approximate solar declination in degrees.
+   */
+  calculateDeclinationFromTime(timeInput) {
+    let targetTimestamp;
+    if (timeInput instanceof Date) {
+      targetTimestamp = timeInput.getTime();
+    } else if (typeof timeInput === 'number') {
+      targetTimestamp = timeInput;
+    } else {
+      console.error("Invalid input for calculateDeclinationFromTime. Provide Date object or timestamp (ms UTC).");
+      return NaN;
+    }
+
+    const fractionOfYear = this.getFractionOfYear(targetTimestamp);
+    if (isNaN(fractionOfYear)) return NaN;
+
+    // The angle (in radians) is directly 2*PI times the fraction of the year
+    // since the reference point was the vernal equinox (where the angle is 0).
+    const angleRad = 2 * Math.PI * fractionOfYear;
+
+    // Earth's Obliquity (approximate, in degrees)
+    const EARTH_OBLIQUITY_DEG = 23.439; // Slightly more standard value often used
+
+    const declinationDeg = EARTH_OBLIQUITY_DEG * Math.sin(angleRad);
+
+    return declinationDeg;
+  }
+
+  /**
+   * Calculates the approximate Equation of Time (EoT) using a timestamp.
+   * Uses the same fractionOfYear calculation and the standard approximation formula:
+   * EoT (minutes) ≈ 9.87 * sin(2 * Angle) - 7.53 * cos(Angle) - 1.5 * sin(Angle)
+   * where Angle = 2π * fractionOfYear
+   *
+   * @param {number|Date} timeInput Timestamp in milliseconds UTC or a Date object.
+   * @returns {number} Approximate Equation of Time in minutes.
+   */
+  calculateEoTFromTime(timeInput) {
+      let targetTimestamp;
+      if (timeInput instanceof Date) {
+        targetTimestamp = timeInput.getTime();
+      } else if (typeof timeInput === 'number') {
+        targetTimestamp = timeInput;
+      } else {
+        console.error("Invalid input for calculateEoTFromTime. Provide Date object or timestamp (ms UTC).");
+        return NaN;
+      }
+
+    const fractionOfYear = this.getFractionOfYear(targetTimestamp);
+    if (isNaN(fractionOfYear)) return NaN;
+
+    // Base angle in radians (same as used for declination)
+    const B_rad = 2 * Math.PI * fractionOfYear;
+
+    // Calculate the terms of the EoT formula
+    const term1 = 9.87 * Math.sin(2 * B_rad); // Note the 2*B_rad
+    const term2 = -7.53 * Math.cos(B_rad);
+    const term3 = -1.5 * Math.sin(B_rad);
+
+    const eotMinutes = term1 + term2 + term3;
+
+    return eotMinutes;
+  }  
+
+  /**
+   * Calculate solar parameters (EoT, declination) based on gamma
+   * @param {Date} date - current UTC date and time
+   * @returns {Object} Object containing gamma, eqTime (hours), and declination (radians)
+   */
+  calculateSolarParameters(date) {
+
+    // Equation of Time in minutes
+    const eqTimeMinutes = this.calculateEoTFromTime(date);
+
+    const eqTime = eqTimeMinutes / 60; // convert to hours
+
+    // Solar declination (radians)
+    const declination = this.calculateDeclinationFromTime(date) / 180 * Math.PI;
+
+    const gamma = null;
+
+    console.log(eqTime, declination);
+
+    return { gamma, eqTime, declination };
+  }
+
+
   /**
    * Get user's location and calculate all solar time values
    */
@@ -176,7 +363,7 @@ class SolarTimeApp {
         const now = new Date();
         
         // Calculate day of year
-        const dayFraction = this.calculateDayFraction(now);
+        // const dayFraction = this.calculateDayFraction(now);
 
         // Calculate yesterday for day length change comparison
         const yesterday = new Date(now);
@@ -237,7 +424,7 @@ class SolarTimeApp {
     const { eqTime } = this.calculateSolarParameters(now);
 
     // Calculate solar time
-    const msPerHour = 60 * 60 * 1000;
+    const msPerHour = 3600000;
     const utcTimestamp = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
     const solarTime = new Date(utcTimestamp + (longitudeOffset + eqTime) * msPerHour);
 
@@ -294,8 +481,8 @@ class SolarTimeApp {
     const approxSunset = new Date(localNoon.getTime() + hourAngleHours * msPerHour);
 
     // Second pass: refine declination and EoT at approximate sunrise and sunset times
-    const {declination: sunriseDeclination} = this.calculateSolarParametersAtTime(approxSunrise);
-    const {declination: sunsetDeclination} = this.calculateSolarParametersAtTime(approxSunset);
+    const {declination: sunriseDeclination} = this.calculateSolarParameters(approxSunrise);
+    const {declination: sunsetDeclination} = this.calculateSolarParameters(approxSunset);
 
     // Refined sunrise calculation
     const hourAngleSunrise = Math.acos(
