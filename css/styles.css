@@ -137,6 +137,55 @@ h3 {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+
+.github-link {
+  text-align: center;
+  margin-top: -10px;
+  margin-bottom: 15px;
+}
+
+.github-link a {
+  color: #333;
+  text-decoration: none;
+  font-size: 0.9em;
+  transition: color 0.3s ease;
+}
+
+.github-link a:hover {
+  color: #0366d6; /* GitHub blue color */
+}
+
+.github-link .fa-github {
+  font-size: 1.2em;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+/* Update to footer styles */
+footer {
+  margin-top: 20px;
+  padding: 10px 0;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);  /* Match other separator lines */
+}
+
+.footer-content a {
+  color: white;  /* Change to white to match the app theme */
+  text-decoration: none;
+  font-size: 0.9em;
+  transition: opacity 0.3s ease;
+}
+
+.footer-content a:hover {
+  opacity: 0.8;  /* Subtle hover effect for white text */
+}
+
+.footer-content .fa-github {
+  font-size: 1.2em;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
 /* Responsive layout */
 @media (max-width: 500px) {
   body {
@@ -169,4 +218,9 @@ h3 {
   h3 {
     font-size: 0.85rem;
   }
+
+  .github-text {
+    display: none; /* Optionally hide text on very small screens */
+  }
+
 }

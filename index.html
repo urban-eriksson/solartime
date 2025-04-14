@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Solar Time application - Calculate and display solar time, sunrise, sunset, and day length based on your location">
   <title>Solartime</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="css/styles.css">
@@ -20,35 +21,35 @@
       <h1><img src="images/solartime.png" alt="Solartime Icon" class="header-icon"> Solartime</h1>
     </header>
     <div class="group-container">
-      <h2 class="group-header"><i class="fa fa-clock-o" aria-hidden="true"></i> Solartime</h2>
+      <h2 id="solar-time-header" class="group-header"><i class="fa fa-clock-o" aria-hidden="true"></i> Solar Time</h2>
       <div class="main-display">
-        <div id="solar-time" class="time-display large-time">--:--:--</div>
-        <div class="formula">
+        <div id="solar-time" class="time-display large-time" aria-live="polite">--:--:--</div>
+        <div class="formula" aria-label="Solar time formula">
           <span>= UTC</span>
           <span><i class="fa fa-plus" aria-hidden="true"></i> Longitude</span>
-          <span><i class="fa fa-plus" aria-hidden="true"></i> EOT</span>
+          <span><i class="fa fa-plus" aria-hidden="true"></i> EoT</span>
         </div>
       </div>
       <div class="time-container">
         <div class="time-item">
           <h3><i class="fa fa-globe" aria-hidden="true"></i> UTC Time</h3>
-          <div id="utc-time" class="time-display">--:--:--</div>
+          <div id="utc-time" class="time-display" aria-live="polite">--:--:--</div>
         </div>
         <div class="time-item">
           <h3><i class="fa fa-map-marker" aria-hidden="true"></i> Longitude Offset</h3>
-          <div id="longitudinal-time" class="time-display">--:--:--</div>
+          <div id="longitudinal-time" class="time-display" aria-live="polite">--:--:--</div>
         </div>
         <div class="time-item">
-          <h3><i class="fa fa-adjust" aria-hidden="true"></i> EOT Offset</h3>
-          <div id="equation-time" class="time-display">--:--:--</div>
+          <h3><i class="fa fa-adjust" aria-hidden="true"></i> EoT Offset</h3>
+          <div id="equation-time" class="time-display" aria-live="polite">--:--:--</div>
         </div>
       </div>
     </div>
     <div class="group-container">
-      <h2 class="group-header"><i class="fa fa-calendar" aria-hidden="true"></i> Day Information</h2>
+      <h2 id="day-info-header" class="group-header"><i class="fa fa-calendar" aria-hidden="true"></i> Day Information</h2>
       <div class="main-display">
-        <div id="day-length" class="time-display large-time">--:--:--</div>
-        <div class="formula">
+        <div id="day-length" class="time-display large-time" aria-live="polite">--:--:--</div>
+        <div class="formula" aria-label="Day length formula">
           <span>= Time between</span>
           <span><i class="fa fa-sun-o" aria-hidden="true"></i> Sunrise</span>
           <span>and</span>
@@ -58,18 +59,26 @@
       <div class="time-container">
         <div class="time-item">
           <h3><i class="fa fa-arrow-up" aria-hidden="true"></i><i class="fa fa-sun-o" aria-hidden="true"></i> Sunrise</h3>
-          <div id="sunrise-time" class="time-display">--:--:--</div>
+          <div id="sunrise-time" class="time-display" aria-live="polite">--:--:--</div>
         </div>
         <div class="time-item">
           <h3><i class="fa fa-arrow-down" aria-hidden="true"></i><i class="fa fa-moon-o" aria-hidden="true"></i> Sunset</h3>
-          <div id="sunset-time" class="time-display">--:--:--</div>
+          <div id="sunset-time" class="time-display" aria-live="polite">--:--:--</div>
         </div>
         <div class="time-item">
           <h3><i class="fa fa-exchange" aria-hidden="true"></i> Daily Change</h3>
-          <div id="day-length-change" class="time-display">--:--:--</div>
+          <div id="day-length-change" class="time-display" aria-live="polite">--:--:--</div>
         </div>
       </div>
     </div>
+    <div id="geo-status" aria-live="assertive"></div>
+    <footer>
+      <div class="footer-content">
+        <a href="https://github.com/urban-eriksson/solartime" target="_blank" rel="noopener" title="View source code on GitHub">
+          <i class="fa fa-github" aria-hidden="true"></i> View on GitHub
+        </a>
+      </div>
+    </footer>
   </div>
   <script src="js/index.js"></script>
 </body>
