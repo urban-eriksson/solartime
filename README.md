@@ -20,9 +20,9 @@ The **Equation of Time (EOT)** is the difference between solar time (true sun po
 
 A simplified formula for EOT is:
 
-\[
+```math
 EOT \approx 9.87\sin(2B) - 7.53\cos(B) - 1.5\sin(B)
-\]
+```
 
 where \( B = \frac{360°}{365}(N - 81) \), and \( N \) is the day of the year (Jan 1 = 1).
 
