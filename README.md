@@ -39,7 +39,7 @@ The Earth rotates 360° every 24 hours, meaning it turns 15° per hour or 1° ev
 If you're east of your reference meridian, solar noon is earlier; if west, it's later.
 
 <p align="center"> 
-<img src="https://github.com/urban-eriksson/solartime/blob/master/images/timezones.png">
+<img src="https://github.com/urban-eriksson/solartime/blob/main/images/timezones.png">
 </p>
 <p align="center"><b>Figure 2.</b> Longitudinal difference between e.g. Rio de Janeiro and Greenwich</p>
 
