@@ -24,7 +24,7 @@ A simplified formula for EOT is:
 EOT \approx 9.87\sin(2B) - 7.53\cos(B) - 1.5\sin(B)
 ```
 
-where $` B = \frac{360°}{365}(N - 81) `$, and \( N \) is the day of the year (Jan 1 = 1).
+where $` B = \frac{360°}{365}(N - 81) `$, and $` N `$ is the day of the year (Jan 1 = 1).
 
 [EOT on Wikipedia](https://en.wikipedia.org/wiki/Equation_of_time)
 
@@ -32,9 +32,9 @@ where $` B = \frac{360°}{365}(N - 81) `$, and \( N \) is the day of the year (J
 
 The Earth rotates 360° every 24 hours, meaning it turns 15° per hour or 1° every 4 minutes. The longitudinal offset corrects for the difference in longitude between your location and your time zone’s central meridian:
 
-\[
+```math
 \text{Offset (minutes)} = 4 \times \text{Longitude difference (degrees)}
-\]
+```
 
 If you're east of your reference meridian, solar noon is earlier; if west, it's later.
 
@@ -47,25 +47,25 @@ Calculating sunrise and sunset involves:
 
 The sunrise/sunset calculation uses the following formula:
 
-\[
+```math
 \cos \omega_0 = \frac{\sin a - \sin \phi \sin \delta}{\cos \phi \cos \delta}
-\]
+```
 
-- \(\phi\) = observer’s latitude
-- \(\delta\) = solar declination
-- \(a\) = altitude of the Sun at sunrise/sunset (-0.833° to include atmospheric refraction and solar disk radius)
+- $`\phi`$ = observer’s latitude
+- $`\delta`$ = solar declination
+- $`a`$ = altitude of the Sun at sunrise/sunset (-0.833° to include atmospheric refraction and solar disk radius)
 
 [Sunrise equation on Wikipedia](https://en.wikipedia.org/wiki/Sunrise_equation)
 
 ### Declination of the Sun
 
-The solar declination (\(\delta\)) varies between +23.44° and -23.44° throughout the year due to Earth's axial tilt. An approximate formula is:
+The solar declination ($`\delta`$) varies between +23.44° and -23.44° throughout the year due to Earth's axial tilt. An approximate formula is:
 
-\[
+```math
 \delta \approx -23.45° \cos\left(\frac{360°}{365}(N + 10)\right)
-\]
+```
 
-- \(N\) = day of the year (Jan 1 = 1).
+- $`N`$ = day of the year (Jan 1 = 1).
 
 [Declination of the Sun on Wikipedia](https://en.wikipedia.org/wiki/Position_of_the_Sun#Declination_of_the_Sun_as_seen_from_Earth)
 
