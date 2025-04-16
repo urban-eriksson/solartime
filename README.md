@@ -24,7 +24,7 @@ A simplified formula for EOT is:
 EOT \approx 9.87\sin(2B) - 7.53\cos(B) - 1.5\sin(B)
 ```
 
-where \( B = \frac{360°}{365}(N - 81) \), and \( N \) is the day of the year (Jan 1 = 1).
+where $` B = \frac{360°}{365}(N - 81) `$, and \( N \) is the day of the year (Jan 1 = 1).
 
 [EOT on Wikipedia](https://en.wikipedia.org/wiki/Equation_of_time)
 
