@@ -39,7 +39,7 @@ Then the EOT in **hours** is:
 ```
 
 - The numerator is in **minutes**, so division by 60 converts to hours.  
-- Positive \(\Delta t_{EOT}\) means solar time runs ahead of mean time; negative means it lags.
+- Positive $`\Delta t_{EOT}`$ means solar time runs ahead of mean time; negative means it lags.
 
 [EOT on Wikipedia](https://en.wikipedia.org/wiki/Equation_of_time)
 
