@@ -56,12 +56,19 @@ class SolarTimeApp {
 
   /* ---------- basic helpers ---------- */
   static pad (n) { return String(n).padStart(2,'0'); }
-  static hms (h) {
-    // Always show '+' for >=0, '-' for <0
-    const sign = h < 0 ? '-' : '+';    
-    const a=Math.abs(h);
-    const hh=Math.floor(a); const mm=Math.floor((a-hh)*60); const ss=Math.floor((a-hh-mm/60)*3600);
-    return sign+`${this.pad(hh)}:${this.pad(mm)}:${this.pad(ss)}`;
+
+  static hms(h, showPlus = true) {
+    const a = Math.abs(h);
+    const hh = Math.floor(a);
+    const mm = Math.floor((a - hh) * 60);
+    const ss = Math.floor(((a - hh) * 60 - mm) * 60);
+    let sign = '';
+    if (h < 0) {
+      sign = '-';
+    } else if (showPlus) {
+      sign = '+';
+    }
+    return `${sign}${this.pad(hh)}:${this.pad(mm)}:${this.pad(ss)}`;
   }
 
   /* ---------- Julian‑Day utilities ---------- */
@@ -113,7 +120,6 @@ class SolarTimeApp {
       }
       tRise=tRiseNew; tSet=tSetNew;
     }
-    console.log(tRise, tSet);
     return {sunrise:tRise, sunset:tSet}; // hours in true solar time
   }
 
@@ -187,7 +193,7 @@ class SolarTimeApp {
       sunsetUtc .toLocaleTimeString([], { hour12:false });    
 
     const dayLenHours = sunset - sunrise;
-    this.el.length.textContent = SolarTimeApp.hms(dayLenHours);
+    this.el.length.textContent = SolarTimeApp.hms(dayLenHours, false);
 
     // --- day‑length change vs. yesterday ------------------
     const JD_yesterday = JD_midnight - 1;

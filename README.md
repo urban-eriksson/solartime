@@ -30,7 +30,7 @@ Solartime calculates the **Equation of Time** from the Julian Day (JD) using:
 D = 0.01720197\,(JD - JD_{2000}) + 6.24004077
 ```  
 
-where \(JD_{2000}\) is the Julian Day of 2000‑01‑01 (UTC).
+where $`JD_{2000}`$ is the Julian Day of 2000‑01‑01 (UTC).
 
 Then the EOT in **hours** is:
 
